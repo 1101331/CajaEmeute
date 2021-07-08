@@ -1,0 +1,16 @@
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\bin\Debug\net5.0\CajaEmeute.exe
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\bin\Debug\net5.0\CajaEmeute.deps.json
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\bin\Debug\net5.0\CajaEmeute.runtimeconfig.json
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\bin\Debug\net5.0\CajaEmeute.runtimeconfig.dev.json
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\bin\Debug\net5.0\CajaEmeute.dll
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\bin\Debug\net5.0\ref\CajaEmeute.dll
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\bin\Debug\net5.0\CajaEmeute.pdb
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\obj\Debug\net5.0\CajaEmeute.csprojAssemblyReference.cache
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\obj\Debug\net5.0\CajaEmeute.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\obj\Debug\net5.0\CajaEmeute.AssemblyInfoInputs.cache
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\obj\Debug\net5.0\CajaEmeute.AssemblyInfo.cs
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\obj\Debug\net5.0\CajaEmeute.csproj.CoreCompileInputs.cache
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\obj\Debug\net5.0\CajaEmeute.dll
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\obj\Debug\net5.0\ref\CajaEmeute.dll
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\obj\Debug\net5.0\CajaEmeute.pdb
+C:\Users\asier\Desktop\Software\C# folder\CajaEmeute\obj\Debug\net5.0\CajaEmeute.genruntimeconfig.cache
