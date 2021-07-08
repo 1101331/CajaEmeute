@@ -43,8 +43,10 @@ namespace CajaEmeute
             return true;
         }
 
-
-
+        public string debugOut()
+        {
+            return buffer.debugOut();
+        }
     }
 
     class TransactionBuffer
@@ -65,6 +67,17 @@ namespace CajaEmeute
             data.Enqueue(t);
             //add log here
         }
+
+        public string debugOut()
+        {
+            string allTransacOut = "BUFFER INFO:\n";
+            foreach (Transaction t in data)
+            {
+                allTransacOut = allTransacOut + t.debugOut();
+                allTransacOut = allTransacOut + "\n";
+            }
+            return allTransacOut;
+        }
     }
 
     class Transaction //placeholder members !!change according to core!!
@@ -80,6 +93,11 @@ namespace CajaEmeute
             pacientID = _pacientID;
             operationType = _operationType;
             monetaryAmount = _monetaryAmount;
+        }
+
+        public string debugOut()
+        {
+            return issueDate.ToString() + " | " + pacientID + " | " + operationType + " | " + monetaryAmount.ToString();
         }
     }
 }
