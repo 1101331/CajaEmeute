@@ -43,6 +43,15 @@ namespace CajaEmeute
             return true;
         }
 
+        public void BufferCleanup() //Tries to send transaction
+        {
+            buffer.SendTransactions();
+        }
+
+        public Transaction DebugPeek()
+        {
+            return buffer.DebugPeek();
+        }
         public string debugOut()
         {
             return buffer.debugOut();
@@ -51,7 +60,7 @@ namespace CajaEmeute
 
     class TransactionBuffer
     {
-        private Queue<Transaction> data; //Temporal replacement for acutal formatted data !!CHANGE SOON!!
+        private Queue<Transaction> data; 
         public TransactionBuffer(int bufferLength)
         {
             data = new Queue<Transaction>();
@@ -66,6 +75,16 @@ namespace CajaEmeute
         {
             data.Enqueue(t);
             //add log here
+        }
+
+        public void SendTransactions()
+        {
+            data.Dequeue();
+        }
+
+        public Transaction DebugPeek()
+        {
+            return data.Peek();
         }
 
         public string debugOut()
