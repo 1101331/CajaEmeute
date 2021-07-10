@@ -17,7 +17,10 @@ namespace CajaEmeute
             Console.WriteLine("1.Debug");
             Console.WriteLine("2.New Transaction");
 
-            switch (Console.ReadKey().KeyChar)
+            char key = Console.ReadKey().KeyChar;
+            Console.Write("\b \b");
+
+            switch (key)
             {
                 case '1':
                     DebugSubmenu();
@@ -35,8 +38,11 @@ namespace CajaEmeute
             Console.WriteLine("----------Debug Menu----------");
             Console.WriteLine("1.Print Buffer");
             Console.WriteLine("2.Deque Last On Buffer");
+            
+            char key = Console.ReadKey().KeyChar;
+            Console.Write("\b \b");
 
-            switch (Console.ReadKey().KeyChar)
+            switch (key)
             {
                 case '1':
                     Console.WriteLine(Program.mainSession.debugOut());
@@ -47,6 +53,11 @@ namespace CajaEmeute
                 default:
                     break;
             }
+        }
+
+        public static void TransactionSubmenu()
+        {
+            Console.WriteLine("");
         }
     }
 }

@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Text;
 using System.Collections.Generic;
 
 namespace CajaEmeute
@@ -20,13 +22,12 @@ namespace CajaEmeute
             connexion = _connexion;
             //add log here for conn status
             sessionStart = DateTime.Now;
-
-            
         }
 
         public void CreateTransaction(Transaction t)
         {
             buffer.AddTransactionToBuffer(t);
+            buffer.AddToTextBuffer(t);
         }
 
         public bool CheckConnection()
@@ -45,7 +46,18 @@ namespace CajaEmeute
 
         public void BufferCleanup() //Tries to send transaction
         {
-            buffer.SendTransactions();
+            while (true)
+            {
+                try
+                {
+                    buffer.SendTransaction();        
+                }
+                catch (System.InvalidOperationException)
+                {
+                    //add log to signify that the buffer is clear    
+                    break;
+                }
+            }
         }
 
         public Transaction DebugPeek()
@@ -68,7 +80,40 @@ namespace CajaEmeute
 
         public void loadTextBuffer() //Loads buffered transactions save to text
         {
-            //add log here
+            FileStream bufferFile;
+
+        }
+
+        public bool AddToTextBuffer(Transaction t) //returns false if could not create file
+        {
+            FileStream bufferFile;
+            string path = "transact.buffer";
+            try
+            {
+                bufferFile = File.Open(path, FileMode.Append);
+            }
+            catch (FileNotFoundException)
+            {
+                try
+                {
+                    bufferFile = File.Open(path, FileMode.Create);
+                }
+                catch (System.Exception)
+                {
+                    Console.WriteLine("ERROR: Could not create offline buffer file. Offline transactions will be lost when closing this program"); //replace with log4net
+                    return false;
+                }
+            }
+            
+            bufferFile.Write(Encoding.Unicode.GetBytes(t.debugOut()), 0, Encoding.Unicode.GetByteCount(t.debugOut()));
+            bufferFile.Close();
+
+            return true;
+        }
+
+        public void RemoveFromTextBuffer()
+        {
+            
         }
 
         public void AddTransactionToBuffer(Transaction t)
@@ -77,9 +122,18 @@ namespace CajaEmeute
             //add log here
         }
 
-        public void SendTransactions()
+        public void SendTransaction() //throws exception to parent function if buffer is empty
         {
-            data.Dequeue();
+            try
+            {
+                data.Dequeue();
+                //code to encode and send to socket
+            }
+            catch (System.InvalidOperationException)
+            {
+                Console.WriteLine("INFO: Buffer is clear"); //replace with log4net
+                throw;
+            }
         }
 
         public Transaction DebugPeek()
