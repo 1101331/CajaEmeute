@@ -15,7 +15,6 @@ namespace CajaEmeute
 
         static byte[] bytes = new byte[1024];
                 
-        
         public connection(string _pacientID, string _operationType, int _monetaryAmount)
         {
             issueDate = DateTime.Now;
@@ -33,8 +32,6 @@ namespace CajaEmeute
             Socket sender = new Socket(ipAddress.AddressFamily,
                     SocketType.Stream, ProtocolType.Tcp);
 
-            byte[] ToEncode = Encoding.ASCII.GetBytes("Suck my dick.. \0"); //
-
              try
                 {
                     // conectándose al end point remoto  
@@ -43,25 +40,23 @@ namespace CajaEmeute
                     Console.WriteLine("Socket conectado a la IP: {0}",
                         sender.RemoteEndPoint.ToString());
 
-                    // codifica la data para enviar    
-                    //byte[] msg = Encoding.ASCII.GetBytes("Probando...\0");
+                    byte[] ToEncode = Encoding.ASCII.GetBytes("Suck my dick.. \0");//encoding the message
 
-                    // envía la data     
-                    int bytesSent = sender.Send(ToEncode);
+                    int bytesSent = sender.Send(ToEncode); //send the message
 
-                    // Recibe la respuesta del servidor    
+                    //receive the answer of the server  
                     int bytesRec = sender.Receive(bytes);
                     Console.WriteLine("Echoed test = {0}",
                         Encoding.ASCII.GetString(bytes, 0, bytesRec));
 
-                    // suelta el socket.    
+                       
                     sender.Shutdown(SocketShutdown.Both);
                     sender.Close();
 
                 }
-                catch
+                catch (Exception e)
                 {
-
+                    Console.WriteLine("Unexpected exception : {0}", e.ToString());
                 }
 
 
