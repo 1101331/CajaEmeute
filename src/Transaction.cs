@@ -11,6 +11,7 @@ namespace CajaEmeute
         private string password;
         private string connexion;
         private TransactionBuffer buffer;
+        connection apiConn;
 
         private DateTime sessionStart;
 
@@ -24,6 +25,7 @@ namespace CajaEmeute
             sessionStart = DateTime.Now;
 
             buffer.loadTextBuffer();
+            apiConn = new connection();
         }
 
         public void CreateTransaction(Transaction t)
@@ -62,13 +64,17 @@ namespace CajaEmeute
             // }
 
             try
-                {
-                    buffer.SendTransaction();        
-                }
-                catch (System.InvalidOperationException)
-                {
-                    //add log to signify that the buffer is clear    
-                }
+            {
+                buffer.SendTransaction(apiConn);
+            }
+            catch (System.InvalidOperationException)
+            {
+                Console.WriteLine("INFO: Empty buffer");//replace with log4net
+            }
+            catch(System.Exception)
+            {
+
+            }
         }
 
         public Transaction DebugPeek()
@@ -181,7 +187,7 @@ namespace CajaEmeute
             //add log here
         }
 
-        public void SendTransaction() //throws exception to parent function if buffer is empty
+        public void SendTransaction(connection apiConn) //throws exception to parent function if buffer is empty
         {
             try
             {
@@ -190,7 +196,10 @@ namespace CajaEmeute
             }
             catch (System.InvalidOperationException)
             {
-                Console.WriteLine("INFO: Buffer is clear"); //replace with log4net
+                throw;
+            }
+            catch(System.Exception)
+            {
                 throw;
             }
             RemoveFromTextBuffer();
