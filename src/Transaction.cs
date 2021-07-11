@@ -105,15 +105,33 @@ namespace CajaEmeute
                 }
             }
             
-            bufferFile.Write(Encoding.Unicode.GetBytes(t.debugOut()), 0, Encoding.Unicode.GetByteCount(t.debugOut()));
+            bufferFile.Write(Encoding.Unicode.GetBytes(t.debugOut() + "\n"), 0, Encoding.Unicode.GetByteCount(t.debugOut() + "\n"));
             bufferFile.Close();
 
             return true;
         }
 
-        public void RemoveFromTextBuffer()
+        public bool RemoveFromTextBuffer() //removes last entry in the buffer file
         {
-            
+            FileStream bufferFile;
+            List<string> bufferFileLines;
+            string path = "transact.buffer";
+            try
+            {
+                bufferFile = File.Open(path, FileMode.Append);
+            }
+            catch (System.Exception)
+            {
+                Console.WriteLine("ERROR: Could not find offline buffer file. Offline transactions will be lost when closing this program");
+                return false;
+            }
+
+            bufferFile.Close();
+            bufferFileLines = new List<string>(File.ReadAllLines(path));
+            bufferFileLines.RemoveAt(0);
+            File.WriteAllLines(path, bufferFileLines);
+
+            return true;
         }
 
         public void AddTransactionToBuffer(Transaction t)
@@ -134,6 +152,7 @@ namespace CajaEmeute
                 Console.WriteLine("INFO: Buffer is clear"); //replace with log4net
                 throw;
             }
+            RemoveFromTextBuffer();
         }
 
         public Transaction DebugPeek()
