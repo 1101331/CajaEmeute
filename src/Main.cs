@@ -4,9 +4,11 @@ namespace CajaEmeute
 {
     class Program
     {
+        
         public static Session mainSession;
         static void Main(string[] args)
         {
+            
             string username, password;
             // Console.Write("Username: ");
             // username = Console.ReadLine();
