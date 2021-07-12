@@ -8,58 +8,71 @@ namespace CajaEmeute
 {
     class connection
     {
-        public static DateTime issueDate;
-        public static String pacientID;
-        public static String operationType;
-        public static int monetaryAmount;
-
-        static byte[] bytes = new byte[1024];
+        static byte[] bytes;
                 
-        public connection(string _pacientID, string _operationType, int _monetaryAmount)
+        public connection() //pls parametrizar el ip y el puerto
         {
-            issueDate = DateTime.Now;
-            pacientID = _pacientID;
-            operationType = _operationType;
-            monetaryAmount = _monetaryAmount;
+            bytes = new byte[1024];
+            connectionTest();
         }
 
-        public static void connectionTest()
+        public void connectionTest()
         {
             IPHostEntry host = Dns.GetHostEntry("localhost");
             IPAddress ipAddress = host.AddressList[0];
             IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
             
-            Socket sender = new Socket(ipAddress.AddressFamily,
-                    SocketType.Stream, ProtocolType.Tcp);
+            Socket sender = new Socket(ipAddress.AddressFamily,SocketType.Stream, ProtocolType.Tcp);
 
-             try
-                {
-                    // conectándose al end point remoto  
-                    sender.Connect(remoteEP);
+            try
+            {
+                // conectándose al end point remoto  
+                sender.Connect(remoteEP);
 
-                    Console.WriteLine("Socket conectado a la IP: {0}",
-                        sender.RemoteEndPoint.ToString());
+                Console.WriteLine("Socket conectado a la IP: {0}",
+                    sender.RemoteEndPoint.ToString());
 
-                    byte[] ToEncode = Encoding.ASCII.GetBytes("Suck my dick.. \0");//encoding the message
+                byte[] ToEncode = Encoding.ASCII.GetBytes("Conn\0");//encoding the message
 
-                    int bytesSent = sender.Send(ToEncode); //send the message
+                int bytesSent = sender.Send(ToEncode); //send the message
 
-                    //receive the answer of the server  
-                    int bytesRec = sender.Receive(bytes);
-                    Console.WriteLine("Echoed test = {0}",
-                        Encoding.ASCII.GetString(bytes, 0, bytesRec));
+                //receive the answer of the server  
+                int bytesRec = sender.Receive(bytes);
+                Console.WriteLine("Echoed test = {0}",
+                    Encoding.ASCII.GetString(bytes, 0, bytesRec));
+                    
+                sender.Shutdown(SocketShutdown.Both);
+                sender.Close();
 
-                       
-                    sender.Shutdown(SocketShutdown.Both);
-                    sender.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unexpected exception : {0}", e.ToString());
+            }
+        }
 
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Unexpected exception : {0}", e.ToString());
-                }
+        public string SendTransaction(Transaction t) //returns server answer
+        {
+            IPHostEntry host = Dns.GetHostEntry("localhost");
+            IPAddress ipAddress = host.AddressList[0];
+            IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
+            Socket sender = new Socket(ipAddress.AddressFamily,SocketType.Stream, ProtocolType.Tcp);
+            byte[] received = new byte[1024];
 
+            bytes = Encoding.ASCII.GetBytes(t.debugOut() + "\0");
 
+            try
+            {
+                sender.Connect(remoteEP);
+                sender.Send(bytes);
+                sender.Receive(received);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unexpected exception : {0}", e.ToString());
+                throw;
+            }
+            return Encoding.ASCII.GetString(received);
         }
     }
 }

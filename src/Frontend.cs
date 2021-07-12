@@ -27,6 +27,7 @@ namespace CajaEmeute
                     break;
                 case '2':
                     Program.mainSession.CreateTransaction(new Transaction(Console.ReadLine(), "test", 404));
+                    Program.mainSession.BufferCleanup();
                     break;
                 default:
                     break;
@@ -48,7 +49,7 @@ namespace CajaEmeute
                     Console.WriteLine(Program.mainSession.debugOut());
                     break;
                 case '2':
-                    Program.mainSession.BufferCleanup();
+                    Program.mainSession.DebugSingleBuffer();
                     break;
                 default:
                     break;

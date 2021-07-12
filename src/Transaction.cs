@@ -11,6 +11,7 @@ namespace CajaEmeute
         private string password;
         private string connexion;
         private TransactionBuffer buffer;
+        connection apiConn;
 
         private DateTime sessionStart;
 
@@ -22,6 +23,10 @@ namespace CajaEmeute
             connexion = _connexion;
             //add log here for conn status
             sessionStart = DateTime.Now;
+
+            buffer.loadTextBuffer();
+            apiConn = new connection();
+            BufferCleanup();
         }
 
         public void CreateTransaction(Transaction t)
@@ -46,17 +51,38 @@ namespace CajaEmeute
 
         public void BufferCleanup() //Tries to send transaction
         {
-            while (true)
+            while(true)
             {
                 try
                 {
-                    buffer.SendTransaction();        
+                    buffer.SendTransaction(apiConn);
                 }
                 catch (System.InvalidOperationException)
                 {
-                    //add log to signify that the buffer is clear    
+                    Console.WriteLine("INFO: Transactions sens, buffer succesfully emptied");//replace with log4net
                     break;
                 }
+                catch(System.Exception)
+                {
+                    Console.WriteLine("ERROR: Could not send a transaction. Falling back on buffer");
+                    break;
+                }
+            }
+        }
+
+        public void DebugSingleBuffer() //Tries to send transaction
+        {
+            try
+            {
+                buffer.SendTransaction(apiConn);
+            }
+            catch (System.InvalidOperationException)
+            {
+                Console.WriteLine("INFO: Empty buffer");//replace with log4net
+            }
+            catch(System.Exception)
+            {
+                Console.WriteLine("ERROR: Could not send a transaction. Falling back on buffer");
             }
         }
 
@@ -81,7 +107,25 @@ namespace CajaEmeute
         public void loadTextBuffer() //Loads buffered transactions save to text
         {
             FileStream bufferFile;
+            string path = "transact.buffer";
+            try
+            {
+                bufferFile = File.Open(path, FileMode.Open);
+                bufferFile.Close();
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("INFO: No offline buffer found. Continuing with an empty buffer");
+                return;
+            }
 
+            List<string> tempData = new List<string>(File.ReadAllLines(path, Encoding.Unicode));
+            foreach (string line in tempData)
+            {
+                string[] tempLine = line.Split('|');
+                data.Enqueue(new Transaction(DateTime.Parse(tempLine[0]),tempLine[1], tempLine[2], int.Parse(tempLine[3])));
+            }
+            Console.WriteLine("INFO: Offline text buffer loaded, trying to send and clear buffer");
         }
 
         public bool AddToTextBuffer(Transaction t) //returns false if could not create file
@@ -97,6 +141,7 @@ namespace CajaEmeute
                 try
                 {
                     bufferFile = File.Open(path, FileMode.Create);
+                    bufferFile.Write(Encoding.Unicode.GetBytes(t.debugOut() + "\n"), 0, Encoding.Unicode.GetByteCount(t.debugOut() + "\n"));
                 }
                 catch (System.Exception)
                 {
@@ -127,9 +172,17 @@ namespace CajaEmeute
             }
 
             bufferFile.Close();
-            bufferFileLines = new List<string>(File.ReadAllLines(path));
+            bufferFileLines = new List<string>(File.ReadAllLines(path, Encoding.Unicode));
             bufferFileLines.RemoveAt(0);
-            File.WriteAllLines(path, bufferFileLines);
+            if (bufferFileLines.Count != 0)
+            {
+                File.WriteAllLines(path, bufferFileLines, Encoding.Unicode);
+            }
+            else
+            {
+                File.Create(path);
+            }
+            
 
             return true;
         }
@@ -140,16 +193,20 @@ namespace CajaEmeute
             //add log here
         }
 
-        public void SendTransaction() //throws exception to parent function if buffer is empty
+        public void SendTransaction(connection apiConn) //throws exception to parent function if buffer is empty or connection has failed
         {
             try
             {
+                Console.WriteLine("INFO: Received from server: {0}", apiConn.SendTransaction(data.Peek()));
                 data.Dequeue();
                 //code to encode and send to socket
             }
             catch (System.InvalidOperationException)
             {
-                Console.WriteLine("INFO: Buffer is clear"); //replace with log4net
+                throw;
+            }
+            catch(System.Exception)
+            {
                 throw;
             }
             RemoveFromTextBuffer();
@@ -187,9 +244,17 @@ namespace CajaEmeute
             monetaryAmount = _monetaryAmount;
         }
 
+        public Transaction(DateTime _issueDate, String _pacientID, String _operationType, int _monetaryAmount) //overload for loading from text file
+        {
+            issueDate = _issueDate;
+            pacientID = _pacientID;
+            operationType = _operationType;
+            monetaryAmount = _monetaryAmount;
+        }
+
         public string debugOut()
         {
-            return issueDate.ToString() + " | " + pacientID + " | " + operationType + " | " + monetaryAmount.ToString();
+            return issueDate.ToString() + "|" + pacientID + "|" + operationType + "|" + monetaryAmount.ToString();
         }
     }
 }
