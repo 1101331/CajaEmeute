@@ -40,7 +40,6 @@ namespace CajaEmeute
                 int bytesRec = sender.Receive(bytes);
                 Console.WriteLine("Echoed test = {0}",
                     Encoding.ASCII.GetString(bytes, 0, bytesRec));
-
                     
                 sender.Shutdown(SocketShutdown.Both);
                 sender.Close();
@@ -52,25 +51,28 @@ namespace CajaEmeute
             }
         }
 
-        public void SendTransaction(Transaction t)
+        public string SendTransaction(Transaction t) //returns server answer
         {
             IPHostEntry host = Dns.GetHostEntry("localhost");
             IPAddress ipAddress = host.AddressList[0];
             IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
             Socket sender = new Socket(ipAddress.AddressFamily,SocketType.Stream, ProtocolType.Tcp);
+            byte[] received = new byte[1024];
 
-            bytes = Encoding.ASCII.GetBytes(t.debugOut());
+            bytes = Encoding.ASCII.GetBytes(t.debugOut() + "\0");
 
             try
             {
                 sender.Connect(remoteEP);
                 sender.Send(bytes);
+                sender.Receive(received);
             }
             catch (Exception e)
             {
                 Console.WriteLine("Unexpected exception : {0}", e.ToString());
                 throw;
             }
+            return Encoding.ASCII.GetString(received);
         }
     }
 }
