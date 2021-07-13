@@ -1,4 +1,8 @@
 ﻿using System;
+using log4net;
+using Microsoft.Extensions.Configuration.Xml;
+
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config")]
 
 namespace CajaEmeute
 {
