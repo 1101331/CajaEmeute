@@ -12,15 +12,19 @@ namespace CajaEmeute
                 
         public connection() //pls parametrizar el ip y el puerto
         {
-            bytes = new byte[1024];
-            connectionTest();
-        }
-
-        public void connectionTest()
-        {
             IPHostEntry host = Dns.GetHostEntry("localhost");
             IPAddress ipAddress = host.AddressList[0];
             IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
+
+            bytes = new byte[1024];
+            connectionTest(host, ipAddress, remoteEP);
+        }
+
+        public void connectionTest(IPHostEntry host, IPAddress ipAddress, IPEndPoint remoteEP)
+        {
+            //IPHostEntry host = Dns.GetHostEntry("localhost");
+            //IPAddress ipAddress = host.AddressList[0];
+            //IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
             
             Socket sender = new Socket(ipAddress.AddressFamily,SocketType.Stream, ProtocolType.Tcp);
 
@@ -47,7 +51,8 @@ namespace CajaEmeute
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unexpected exception : {0}", e.ToString());
+                //Console.WriteLine("Unexpected exception : {0}", e.ToString());
+                Session.log.Error("Unexpected exception : {0}", e);
             }
         }
 
@@ -69,8 +74,9 @@ namespace CajaEmeute
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unexpected exception : {0}", e.ToString());
-                throw;
+                //Console.WriteLine("Unexpected exception : {0}", e.ToString());               
+                Session.log.Error("Unexpected exception : {0}", e);
+                //throw;
             }
             return Encoding.ASCII.GetString(received);
         }
