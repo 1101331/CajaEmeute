@@ -72,11 +72,9 @@ namespace CajaEmeute
                 sender.Send(bytes);
                 sender.Receive(received);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                //Console.WriteLine("Unexpected exception : {0}", e.ToString());               
-                Session.log.Error("Unexpected exception : {0}", e);
-                //throw;
+                throw;
             }
             return Encoding.ASCII.GetString(received);
         }
