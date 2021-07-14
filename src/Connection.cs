@@ -69,8 +69,9 @@ namespace CajaEmeute
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unexpected exception : {0}", e.ToString());
-                throw;
+                //Console.WriteLine("Unexpected exception : {0}", e.ToString());               
+                Session.log.Error("Unexpected exception : {0}", e);
+                //throw;
             }
             return Encoding.ASCII.GetString(received);
         }

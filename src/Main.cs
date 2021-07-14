@@ -6,10 +6,12 @@ using Microsoft.Extensions.Configuration.Xml;
 
 namespace CajaEmeute
 {
+
     class Program
     {
         
         public static Session mainSession;
+       
         static void Main(string[] args)
         {
             
