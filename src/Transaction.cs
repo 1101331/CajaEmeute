@@ -39,6 +39,32 @@ namespace CajaEmeute
             buffer.AddToTextBuffer(t);
         }
 
+        public void addTransactToOfflineList(Transaction t)
+        {
+            FileStream listFile;
+            string path = "transact.list";
+            try
+            {
+                listFile = File.Open(path, FileMode.Append);
+            }
+            catch (FileNotFoundException)
+            {
+                try
+                {
+                    listFile = File.Open(path, FileMode.Create);
+                    listFile.Write(Encoding.Unicode.GetBytes(t.debugOut() + "\n"), 0, Encoding.Unicode.GetByteCount(t.debugOut() + "\n"));
+                }
+                catch (System.Exception e)
+                {
+                    Session.log.Error("Could not create offline list file, cuadre will not work", e);
+                    return;
+                }
+            }
+            
+            listFile.Write(Encoding.Unicode.GetBytes(t.debugOut() + "\n"), 0, Encoding.Unicode.GetByteCount(t.debugOut() + "\n"));
+            listFile.Close();
+        }
+
         public bool CheckConnection()
         {
             bool conn = true; //replace by function to check connection to api!!!!
@@ -63,12 +89,12 @@ namespace CajaEmeute
                 }
                 catch (System.InvalidOperationException)
                 {
-                    log.Info("Transactions sens, buffer succesfully emptied");
+                    log.Info("Transactions sent, buffer succesfully emptied");
                     break;
                 }
-                catch(System.Exception)
+                catch(System.Exception e)
                 {
-                    log.Error("Could not send a transaction. Falling back on buffer");
+                    log.Error("Could not send transactions. Falling back on buffer", e);
                     break;
                 }
             }
@@ -147,9 +173,9 @@ namespace CajaEmeute
                     bufferFile = File.Open(path, FileMode.Create);
                     bufferFile.Write(Encoding.Unicode.GetBytes(t.debugOut() + "\n"), 0, Encoding.Unicode.GetByteCount(t.debugOut() + "\n"));
                 }
-                catch (System.Exception)
+                catch (System.Exception e)
                 {
-                    Session.log.Error("Could not create offline buffer file. Offline transactions will be lost when closing this program");
+                    Session.log.Error("Could not create offline buffer file. Offline transactions will be lost when closing this program", e);
                     return false;
                 }
             }
@@ -207,12 +233,11 @@ namespace CajaEmeute
             }
             catch (System.InvalidOperationException)
             {
-                Session.log.Error("Error sending transaction"); //check this
                 throw;
             }
-            catch(System.Exception)
+            catch(System.Exception e)
             {
-                Session.log.Error("Could not send transaction"); //check this
+                Session.log.Error("Could not send transaction", e); //check this
                 throw;
             }
             RemoveFromTextBuffer();

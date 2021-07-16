@@ -17,7 +17,6 @@ namespace CajaEmeute
             Console.WriteLine("1.Usuario");
             Console.WriteLine("2.New Transaction");
             Console.WriteLine("3.Debug");
-
             char key = Console.ReadKey().KeyChar;
             Console.Write("\b \b");
 
@@ -62,7 +61,18 @@ namespace CajaEmeute
 
         public static void TransactionSubmenu()
         {
-            Console.WriteLine("");
+            string patientID;
+            patientID = Console.ReadLine();
+
+            //send request to see pending transactions for patient
+
+            //send transaction
+
+        }
+
+        public static void CuadreMenu()
+        {
+
         }
     }
 }
