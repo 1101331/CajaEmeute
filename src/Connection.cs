@@ -23,9 +23,12 @@ namespace CajaEmeute
         public static byte[] test(string x)
         {
             string name;
+            string pass;
             Console.WriteLine("Ingrese su nombre de usuario: ");
             name = Console.ReadLine();
-            byte[] ToEncode = Encoding.ASCII.GetBytes(x + "|" + name + "\0");
+            Console.WriteLine("Ingrese su contraseña: ");
+            pass = Console.ReadLine();
+            byte[] ToEncode = Encoding.ASCII.GetBytes(x + "|" + name + "|" + pass + "|" + "\0");
             return ToEncode;
         }
 
