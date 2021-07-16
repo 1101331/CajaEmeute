@@ -27,9 +27,11 @@ namespace CajaEmeute
             sessionStart = DateTime.Now;
 
             buffer.loadTextBuffer();
-            apiConn = new connection();
+            //apiConn = new connection();
             BufferCleanup();
         }
+        
+        
 
         public void CreateTransaction(Transaction t)
         {
