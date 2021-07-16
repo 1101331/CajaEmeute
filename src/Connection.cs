@@ -10,24 +10,35 @@ namespace CajaEmeute
     {
         static byte[] bytes;
                 
-        public connection() //pls parametrizar el ip y el puerto
+        public connection(string x) //pls parametrizar el ip y el puerto
         {
             IPHostEntry host = Dns.GetHostEntry("localhost");
             IPAddress ipAddress = host.AddressList[0];
             IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
-
+            
             bytes = new byte[1024];
-            connectionTest(host, ipAddress, remoteEP);
+            connectionTest(host, ipAddress, remoteEP, x);
         }
 
-        public void connectionTest(IPHostEntry host, IPAddress ipAddress, IPEndPoint remoteEP)
+        public static byte[] test(string x)
+        {
+            string name;
+            Console.WriteLine("Ingrese su nombre de usuario: ");
+            name = Console.ReadLine();
+            byte[] ToEncode = Encoding.ASCII.GetBytes(x + "|" + name + "\0");
+            return ToEncode;
+        }
+
+        public static void connectionTest(IPHostEntry host, IPAddress ipAddress, IPEndPoint remoteEP, string x) //IPHostEntry host, IPAddress ipAddress, IPEndPoint remoteEP
         {
             //IPHostEntry host = Dns.GetHostEntry("localhost");
             //IPAddress ipAddress = host.AddressList[0];
             //IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
             
             Socket sender = new Socket(ipAddress.AddressFamily,SocketType.Stream, ProtocolType.Tcp);
-
+            IPEndPoint miPC = new IPEndPoint(ipAddress, 11005);
+            
+            sender.Bind(miPC);
             try
             {
                 // conectándose al end point remoto  
@@ -36,13 +47,13 @@ namespace CajaEmeute
                 Console.WriteLine("Socket conectado a la IP: {0}",
                     sender.RemoteEndPoint.ToString());
 
-                byte[] ToEncode = Encoding.ASCII.GetBytes("Conn\0");//encoding the message
+                //byte[] ToEncode = Encoding.ASCII.GetBytes("Conn\0");//encoding the message
 
-                int bytesSent = sender.Send(ToEncode); //send the message
+                int bytesSent = sender.Send(test(x)); //send the message
 
                 //receive the answer of the server  
                 int bytesRec = sender.Receive(bytes);
-                Console.WriteLine("Echoed test = {0}",
+                Console.WriteLine( bytesRec + "Echoed test = {0}",
                     Encoding.ASCII.GetString(bytes, 0, bytesRec));
                     
                 sender.Shutdown(SocketShutdown.Both);

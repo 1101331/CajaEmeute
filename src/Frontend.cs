@@ -14,8 +14,9 @@ namespace CajaEmeute
         {
             //Display options
             Console.WriteLine("-------Presione un numero-------");
-            Console.WriteLine("1.Debug");
+            Console.WriteLine("1.Usuario");
             Console.WriteLine("2.New Transaction");
+            Console.WriteLine("3.Debug");
 
             char key = Console.ReadKey().KeyChar;
             Console.Write("\b \b");
@@ -23,11 +24,14 @@ namespace CajaEmeute
             switch (key)
             {
                 case '1':
-                    DebugSubmenu();
+                    connection conexion = new connection(key.ToString());
                     break;
                 case '2':
                     Program.mainSession.CreateTransaction(new Transaction(Console.ReadLine(), "test", 404));
                     Program.mainSession.BufferCleanup();
+                    break;
+                case '3':
+                    DebugSubmenu();
                     break;
                 default:
                     break;
